@@ -10,6 +10,7 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
 import PersonalInfo from './Components/PersonalInfo';
+import EducationInfo from './Components/EducationInfo';
 
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -74,6 +75,19 @@ const IOSSwitch = styled((props) => (
 function App() {
   const [editMode, setEditMode] = React.useState(false);
 
+  const [data, setData] = React.useState({
+    personal: {},
+    exp: {},
+    education: {},
+  });
+  // Pass Personal Info Component to data
+  function handleDataFromPersonal(state) {
+    setData({
+      ...data,
+      personal: state
+    })
+
+  }
   return (
     <>
       <h1>Welcome to CV builder</h1>
@@ -85,24 +99,38 @@ function App() {
       </FormGroup>
       {editMode === false ?
         <Card sx={{ minWidth: 800, backgroundColor: '#212121', color: 'white', boxShadow: '2px 10px 20px rgba(66,66,66,.3)', borderRadius: '13px' }}>
-          <CardContent>
+          {/* Personal view */}
+          <CardContent id="personalPreview">
             <Typography variant="h5">
-              John Doe
+              {data.personal.name ? data.personal.name : 'John Doe'}
             </Typography>
-            <Typography sx={{ mb: 1.5 }}>Tehran</Typography>
-            <Typography sx={{ mb: 1.5 }}>sample@gmail.com</Typography>
+            <Typography sx={{ mb: 1.5 }}>{data.personal.location ? data.personal.location : 'Canada'}</Typography>
+            <Typography sx={{ mb: 1.5 }}>{data.personal.email ? data.personal.email : 'example@gmail.com'}</Typography>
             <Typography>
-              098 098 05496 5
+              {data.personal.phone ? data.personal.phone : '921 555 555'}
             </Typography>
+          </CardContent>
+          <hr style={{ opacity: '.04' }} />
+          {/* Education View */}
+          <CardContent id="educationPreview">
+            <Typography variant="h5">
+              Education Section
+            </Typography>
+
           </CardContent>
           <CardActions>
             <Button style={{ color: 'red' }}>Save as PDF</Button>
           </CardActions>
         </Card >
         :
+        // Edit Mode view
         <Card sx={{ minWidth: 800, backgroundColor: '#212121', color: 'white', boxShadow: '2px 10px 20px rgba(66,66,66,.3)', borderRadius: '13px' }}>
           <CardContent>
-            <PersonalInfo></PersonalInfo>
+            <Typography sx={{ my: 2.5, fontWeight: 'bold' }}>Personal :</Typography>
+            <PersonalInfo id='personal' sendDataToParent={handleDataFromPersonal}></PersonalInfo>
+            <hr style={{ opacity: '.04' }} />
+            <Typography sx={{ my: 2.5, fontWeight: 'bold' }}>Education :</Typography>
+            <EducationInfo></EducationInfo>
           </CardContent>
         </Card >
       }
