@@ -1,69 +1,208 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { Box, Stack, TextField } from '@mui/material';
+import { Box, Paper, Stack, TextField } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import Grid from '@mui/material/Grid2';
-import { nanoid } from 'nanoid/non-secure';
+import { customAlphabet } from 'nanoid/non-secure';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import dayjs from 'dayjs';
 
-function EducationInfo() {
-    const [list, setList] = React.useState([{
-        id: nanoid(),
-        title: "madrak",
-        name: "uny",
-        startDate: "",
-        endDate: "",
-    }]);
+const nanoid = customAlphabet('123456789', 5);
 
-    const addComponent = () => {
+var data = [];
+
+function EducationInfo({ sendEducationInfoToParent }) {
+    const [list, setList] = React.useState([]);
+    const [selectedItem, setSelectedItem] = React.useState({
+        item: null,
+        index: null
+    });
+    const [degree, setDegree] = React.useState('');
+    const [title, setTitle] = React.useState('');
+    const [startDate, setStartDate] = React.useState(dayjs('2022-04-17'));
+    const [endDate, setEndDate] = React.useState(dayjs('2022-04-17'));
+
+    React.useEffect(() => {
+    }, [selectedItem])
+
+    function RenderEductionForm() {
+        return (
+            <div>
+                {data.length == 0 ? (<div>No Item, Create a one!</div>) :
+                    <TableContainer>
+                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Degree</TableCell>
+                                    <TableCell align="right">Title</TableCell>
+                                    <TableCell align="right">Start Date</TableCell>
+                                    <TableCell align="right">End Date</TableCell>
+                                    <TableCell align="right">Actions</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {data.map((item, i) => (
+                                    <TableRow
+                                        key={item.id}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <TableCell component="th" scope="row">
+                                            {item.degree}
+                                        </TableCell>
+                                        <TableCell align="right">{item.title}</TableCell>
+                                        <TableCell align="right">{item.startDate}</TableCell>
+                                        <TableCell align="right">{item.endDate}</TableCell>
+                                        <TableCell align="right">
+                                            <Button variant='contained' color='error' sx={{ marginRight: 1 }} onClick={() => {
+                                                removeItem(i);
+                                            }} size='small'>Delete</Button>
+                                            <Button variant='contained' color='primary' onClick={() => {
+                                                selectItem(item, i);
+                                            }} size='small'>Edit</Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                }
+            </div>
+        )
+    }
+    function selectItem(item, i) {
+        setSelectedItem({
+            item: item,
+            index: i
+        })
+        setDegree(list[i].degree);
+        setTitle(list[i].title);
+    }
+    // function eductionItem(item, i) {
+    //     return (
+    //         <div>
+    //             <Button variant='contained' color='error' sx={{ marginRight: 1 }} onClick={() => {
+    //                 removeItem(i);
+    //             }} size='small'>Delete</Button>
+    //             <Button variant='contained' color='primary' onClick={() => {
+    //                 selectItem(item, i);
+    //             }} size='small'>Edit</Button>
+    //             <div>
+    //                 <div>Name : {item.name}</div>
+    //                 <div>Title : {item.title}</div>
+    //                 <hr />
+    //             </div>
+    //         </div>
+    //     )
+    // }
+    function inputForm() {
+        return (
+            <div>
+                <Box
+
+                    component="form"
+                    sx={{ '& > :not(style)': { m: 1, maxWidth: 700, mx: 'auto' } }}
+                    autoComplete="off"
+                >
+                    <Grid container spacing={2}>
+                        <Grid size={12}>
+                            <TextField label="Degree" variant="outlined" name="degree" type='text' fullWidth value={degree} onChange={e => setDegree(e.target.value)}
+                            />
+                        </Grid>
+                        <Grid size={12}>
+                            <TextField id="title" label="Title" variant="outlined" name="title" type='text' fullWidth onChange={e => setTitle(e.target.value)} value={title}
+
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, md: 6 }}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker label='Start Date' sx={{ width: '100%' }} value={startDate}
+                                    onChange={(newValue) => setStartDate(newValue)} />
+                            </LocalizationProvider>
+                        </Grid>
+                        <Grid size={{ xs: 12, md: 6 }}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker label='End Date' sx={{ width: '100%' }} value={endDate}
+                                    onChange={(newValue) => setEndDate(newValue)} />
+                            </LocalizationProvider>
+                        </Grid>
+                    </Grid>
+
+                    <Button variant='contained' color='success' onClick={updateList}>{selectedItem.index !== null ? 'Update Item' : 'Add New Item'}</Button>
+
+                    <hr style={{ opacity: '.04', marginTop: '20px', marginBottom: '20px' }} />
+                </Box>
+            </div>
+        )
+    }
+    const updateList = () => {
+        if (selectedItem.index !== null) {
+            updateItem();
+            return;
+        }
+        createItem();
+    };
+    function removeItem(index) {
+        let newArr = [...list];
+        newArr.splice(index, 1);
+        setList(newArr);
+        data.splice(index, 1);
+        resetForm();
+    }
+    function resetForm() {
+        setSelectedItem({
+            index: null,
+            item: null
+        });
+        setDegree("");
+        setTitle("");
+    }
+
+    function updateItem() {
+        let newArr = [...list];
+        var form = {
+            id: selectedItem.item.id,
+            degree: degree,
+            title: title,
+            startDate: dayjs(startDate.$d).format('YYYY-MM-DD'),
+            endDate: dayjs(endDate.$d).format('YYYY-MM-DD')
+        };
+        newArr[selectedItem.index] = form;
+        setList(newArr);
+        data[selectedItem.index] = form;
+        resetForm();
+
+    }
+    function createItem() {
         var newItem = {
             id: nanoid(),
-            title: "madrak",
-            name: "uny",
-            startDate: "",
-            endDate: "",
+            title: title,
+            degree: degree,
+            startDate: dayjs(startDate.$d).format('YYYY-MM-DD'),
+            endDate: dayjs(endDate.$d).format('YYYY-MM-DD')
         }
+        console.log(newItem.startDate)
         setList([...list, newItem]);
-    };
+        data = [...data, newItem];
+        resetForm();
+    }
+    function saveData() {
+        console.log(list)
+        sendEducationInfoToParent(list);
+    }
 
     return (
         <>
-            <Box
-                component="form"
-                sx={{ '& > :not(style)': { m: 1, maxWidth: 700, mx: 'auto' } }}
-                autoComplete="off"
-            >
-                {list.map((item) => (
-                    <div key={item.id}>
-                        <Grid container spacing={2}>
-                            <Grid size={{ xs: 12, md: 6 }}>
-                                <TextField id="title" label="Title" variant="outlined" name="title" type='text' fullWidth value={data.name}
-                                    onChange={handleChange}
-                                />
-                            </Grid>
-                            <Grid size={{ xs: 12, md: 6 }}>
-                                <TextField id="name" label="Name" variant="outlined" name="name" type='text' fullWidth
-                                />
-                            </Grid>
-                            <Grid size={{ xs: 12, md: 6 }}>
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DatePicker label='Start Date' sx={{ width: '100%' }} />
-                                </LocalizationProvider>
-                            </Grid>
-                            <Grid size={{ xs: 12, md: 6 }}>
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DatePicker label='End Date' sx={{ width: '100%' }} />
-                                </LocalizationProvider>
-                            </Grid>
-                        </Grid>
-                        <hr style={{ opacity: '.04', marginTop: '20px', marginBottom: '20px' }} />
-                    </div>
-                ))}
-            </Box>
-            <Button onClick={addComponent}>Add</Button>
-            <Button sx={{ backgroundColor: '#0d47a1', color: 'white', my: 2 }} >Save</Button>
+            {inputForm()}
+            <RenderEductionForm />
+            <Button sx={{ backgroundColor: '#0d47a1', color: 'white', my: 2 }} onClick={saveData} >Save</Button>
         </>
     )
 }

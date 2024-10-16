@@ -81,12 +81,17 @@ function App() {
     education: {},
   });
   // Pass Personal Info Component to data
-  function handleDataFromPersonal(state) {
+  function handleDataFromPersonal(personalList) {
     setData({
       ...data,
-      personal: state
+      personal: personalList
     })
-
+  }
+  function handleDataFromEducation(educationList) {
+    setData({
+      ...data,
+      education: educationList
+    })
   }
   return (
     <>
@@ -114,9 +119,8 @@ function App() {
           {/* Education View */}
           <CardContent id="educationPreview">
             <Typography variant="h5">
-              Education Section
+              hi
             </Typography>
-
           </CardContent>
           <CardActions>
             <Button style={{ color: 'red' }}>Save as PDF</Button>
@@ -127,10 +131,10 @@ function App() {
         <Card sx={{ minWidth: 800, backgroundColor: '#212121', color: 'white', boxShadow: '2px 10px 20px rgba(66,66,66,.3)', borderRadius: '13px' }}>
           <CardContent>
             <Typography sx={{ my: 2.5, fontWeight: 'bold' }}>Personal :</Typography>
-            <PersonalInfo id='personal' sendDataToParent={handleDataFromPersonal}></PersonalInfo>
+            <PersonalInfo id='personal' sendPersonalInfoToParent={handleDataFromPersonal}></PersonalInfo>
             <hr style={{ opacity: '.04' }} />
             <Typography sx={{ my: 2.5, fontWeight: 'bold' }}>Education :</Typography>
-            <EducationInfo></EducationInfo>
+            <EducationInfo sendEducationInfoToParent={handleDataFromEducation}></EducationInfo>
           </CardContent>
         </Card >
       }

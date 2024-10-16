@@ -10,7 +10,7 @@ var data = {
     location: "Iran",
     phone: "098 0650 989",
 };
-function PersonalInfo({ sendDataToParent }) {
+function PersonalInfo({ sendPersonalInfoToParent }) {
     const [state, setState] = React.useState({
         name: "John Doe",
         email: "john.doe@test.com",
@@ -26,7 +26,7 @@ function PersonalInfo({ sendDataToParent }) {
             }))
     };
     function handleClick() {
-        sendDataToParent(state);
+        sendPersonalInfoToParent(state);
     }
     return (
         <>
