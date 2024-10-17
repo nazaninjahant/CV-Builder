@@ -9,8 +9,18 @@ import Typography from '@mui/material/Typography';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Switch from '@mui/material/Switch';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+// Local
 import PersonalInfo from './Components/PersonalInfo';
 import EducationInfo from './Components/EducationInfo';
+import Skills from './Components/Skillset';
+import Portfolio from './Components/Resume';
+import { Divider } from '@mui/material';
+import ExperienceInfo from './Components/Experience';
+import SocialMedia from './Components/SocialMedia';
 
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
@@ -72,27 +82,42 @@ const IOSSwitch = styled((props) => (
   },
 }));
 
+
 function App() {
   const [editMode, setEditMode] = React.useState(false);
 
   const [data, setData] = React.useState({
     personal: {},
-    exp: {},
-    education: {},
+    experience: [],
+    education: [],
+    skills: [],
+    socialMedia: [],
   });
-  // Pass Personal Info Component to data
-  function handleDataFromPersonal(personalList) {
-    setData({
-      ...data,
-      personal: personalList
-    })
+
+
+  function handleData(list, key) {
+    var _data = JSON.parse(JSON.stringify(data));
+    _data[key] = list;
+    setData(_data);
   }
-  function handleDataFromEducation(educationList) {
-    setData({
-      ...data,
-      education: educationList
-    })
+
+  function Panel({ id, name, children }) {
+    return (
+      <Accordion>
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls={id + "bh-content"}
+          id={id + "bh-header"}
+        >
+          <Typography >{name}</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {children}
+        </AccordionDetails>
+      </Accordion>
+    )
   }
+
   return (
     <>
       <h1>Welcome to CV builder</h1>
@@ -103,38 +128,40 @@ function App() {
         />
       </FormGroup>
       {editMode === false ?
+
         <Card sx={{ minWidth: 800, backgroundColor: '#212121', color: 'white', boxShadow: '2px 10px 20px rgba(66,66,66,.3)', borderRadius: '13px' }}>
-          {/* Personal view */}
-          <CardContent id="personalPreview">
-            <Typography variant="h5">
-              {data.personal.name ? data.personal.name : 'John Doe'}
-            </Typography>
-            <Typography sx={{ mb: 1.5 }}>{data.personal.location ? data.personal.location : 'Canada'}</Typography>
-            <Typography sx={{ mb: 1.5 }}>{data.personal.email ? data.personal.email : 'example@gmail.com'}</Typography>
-            <Typography>
-              {data.personal.phone ? data.personal.phone : '921 555 555'}
-            </Typography>
-          </CardContent>
-          <hr style={{ opacity: '.04' }} />
-          {/* Education View */}
-          <CardContent id="educationPreview">
-            <Typography variant="h5">
-              hi
-            </Typography>
+          <CardContent >
+            <Portfolio data={data} />
           </CardContent>
           <CardActions>
             <Button style={{ color: 'red' }}>Save as PDF</Button>
           </CardActions>
         </Card >
+
+
         :
         // Edit Mode view
         <Card sx={{ minWidth: 800, backgroundColor: '#212121', color: 'white', boxShadow: '2px 10px 20px rgba(66,66,66,.3)', borderRadius: '13px' }}>
           <CardContent>
-            <Typography sx={{ my: 2.5, fontWeight: 'bold' }}>Personal :</Typography>
-            <PersonalInfo id='personal' sendPersonalInfoToParent={handleDataFromPersonal}></PersonalInfo>
-            <hr style={{ opacity: '.04' }} />
-            <Typography sx={{ my: 2.5, fontWeight: 'bold' }}>Education :</Typography>
-            <EducationInfo sendEducationInfoToParent={handleDataFromEducation}></EducationInfo>
+            <Panel id='personal' name='Personal'>
+              <PersonalInfo sendPersonalInfoToParent={handleData}></PersonalInfo>
+            </Panel>
+            <Divider sx={{ mt: 2 }} />
+            <Panel id='education' name='Education'>
+              <EducationInfo sendEducationInfoToParent={handleData}></EducationInfo>
+            </Panel>
+            <Divider sx={{ mt: 2 }} />
+            <Panel id='experience' name='Experience'>
+              <ExperienceInfo sendExperienceInfoToParent={handleData}></ExperienceInfo>
+            </Panel>
+            <Divider sx={{ mt: 2 }} />
+            <Panel id='skills' name='Skills'>
+              <Skills sendSkillsToParent={handleData}></Skills>
+            </Panel>
+            <Divider sx={{ mt: 2 }} />
+            <Panel id='socialMedia' name='Social Media'>
+              <SocialMedia sendSocialMediaToParent={handleData}></SocialMedia>
+            </Panel>
           </CardContent>
         </Card >
       }

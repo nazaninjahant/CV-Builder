@@ -19,7 +19,7 @@ const nanoid = customAlphabet('123456789', 5);
 
 var data = [];
 
-function EducationInfo({ sendEducationInfoToParent }) {
+function ExperienceInfo({ sendExperienceInfoToParent }) {
     const [list, setList] = React.useState([]);
     const [selectedItem, setSelectedItem] = React.useState({
         item: null,
@@ -177,7 +177,7 @@ function EducationInfo({ sendEducationInfoToParent }) {
         resetForm();
     }
     function saveData() {
-        sendEducationInfoToParent(data, 'education');
+        sendExperienceInfoToParent(data, 'experience');
     }
 
     return (
@@ -189,4 +189,4 @@ function EducationInfo({ sendEducationInfoToParent }) {
     )
 }
 
-export default EducationInfo
+export default ExperienceInfo
