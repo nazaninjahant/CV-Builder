@@ -100,8 +100,8 @@ export default function SocialMedia({ sendSocialMediaToParent }) {
 
     function selectItem(i) {
         setSelectedItem(i)
-        setLink(list[i].link)
-        setIcon(list[i].value)
+        setLink(data[i].link)
+        setIcon(data[i].value)
     }
     function saveData() {
         sendSocialMediaToParent(data, 'socialMedia');
