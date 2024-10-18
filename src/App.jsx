@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import './App.css'
+// MUI
+import { Divider, Stack } from '@mui/material';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -18,10 +18,11 @@ import PersonalInfo from './Components/PersonalInfo';
 import EducationInfo from './Components/EducationInfo';
 import Skills from './Components/Skillset';
 import Portfolio from './Components/Resume';
-import { Divider } from '@mui/material';
 import ExperienceInfo from './Components/Experience';
 import SocialMedia from './Components/SocialMedia';
+import DownloadPDF from "./Components/DownloadPDF";
 
+// Switch Style
 const IOSSwitch = styled((props) => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple {...props} />
 ))(({ theme }) => ({
@@ -84,8 +85,8 @@ const IOSSwitch = styled((props) => (
 
 
 function App() {
-  const [editMode, setEditMode] = React.useState(false);
 
+  const [editMode, setEditMode] = React.useState(false);
   const [data, setData] = React.useState({
     personal: {},
     experience: [],
@@ -94,7 +95,7 @@ function App() {
     socialMedia: [],
   });
 
-
+  // Get Data from Child and set to data state
   function handleData(list, key) {
     var _data = JSON.parse(JSON.stringify(data));
     _data[key] = list;
@@ -118,30 +119,37 @@ function App() {
     )
   }
 
+
+
   return (
     <>
       <h1>Welcome to CV builder</h1>
-      <FormGroup>
-        <FormControlLabel
-          control={<IOSSwitch sx={{ m: 1 }} value={editMode} onChange={() => setEditMode(!editMode)} />}
-          label="Edit mode"
-        />
-      </FormGroup>
-      {editMode === false ?
+      {/* Switch and PDF export */}
+      <Stack direction='row' sx={{ justifyContent: 'space-between', marginBottom: 2 }}>
+        <FormGroup>
+          <FormControlLabel
+            control={<IOSSwitch sx={{ m: 1 }} value={editMode} onChange={() => setEditMode(!editMode)} />}
+            label="Edit mode"
+          />
+        </FormGroup>
 
-        <Card sx={{ minWidth: 800, backgroundColor: '#212121', color: 'white', boxShadow: '2px 10px 20px rgba(66,66,66,.3)', borderRadius: '13px' }}>
+        {!editMode && <DownloadPDF rootElementId="cv-content" downloadFileName="my_cv.pdf" />}
+
+      </Stack>
+      {editMode === false ?
+        // Data Preview
+        <Card sx={{ minWidth: 800, boxShadow: '2px 10px 20px rgba(66,66,66,.2)', borderRadius: '13px' }}>
           <CardContent >
-            <Portfolio data={data} />
+            <div id="cv-content" name='cv-content'>
+              <Portfolio data={data} />
+            </div>
           </CardContent>
-          <CardActions>
-            <Button style={{ color: 'red' }}>Save as PDF</Button>
-          </CardActions>
         </Card >
 
 
         :
         // Edit Mode view
-        <Card sx={{ minWidth: 800, backgroundColor: '#212121', color: 'white', boxShadow: '2px 10px 20px rgba(66,66,66,.3)', borderRadius: '13px' }}>
+        <Card sx={{ minWidth: 800, boxShadow: '2px 10px 20px rgba(66,66,66,.3)', borderRadius: '13px' }}>
           <CardContent>
             <Panel id='personal' name='Personal'>
               <PersonalInfo sendPersonalInfoToParent={handleData}></PersonalInfo>
@@ -168,5 +176,6 @@ function App() {
     </>
   )
 }
+
 
 export default App

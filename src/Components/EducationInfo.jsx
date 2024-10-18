@@ -1,7 +1,7 @@
 import * as React from 'react';
+// MUI
 import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
-import { Box, Divider, Paper, Stack, TextField } from '@mui/material';
+import { Alert, Box, Divider, Paper, Snackbar, Stack, TextField } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -13,13 +13,15 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+// Day Converter
 import dayjs from 'dayjs';
-
+// Generate Random ID
 const nanoid = customAlphabet('123456789', 5);
 
 var data = [];
 
 function EducationInfo({ sendEducationInfoToParent }) {
+    const formRef = React.useRef();
     const [list, setList] = React.useState([]);
     const [selectedItem, setSelectedItem] = React.useState({
         item: null,
@@ -29,11 +31,13 @@ function EducationInfo({ sendEducationInfoToParent }) {
     const [title, setTitle] = React.useState('');
     const [startDate, setStartDate] = React.useState(dayjs('2022-04-17'));
     const [endDate, setEndDate] = React.useState(dayjs('2022-04-17'));
+    const [error, setError] = React.useState(false);
 
     React.useEffect(() => {
     }, [selectedItem])
 
     function RenderEductionForm() {
+        // Sort Added Data from inputForm
         return (
             <div>
                 {data.length == 0 ? (<div>No Item, Create a one!</div>) :
@@ -85,13 +89,18 @@ function EducationInfo({ sendEducationInfoToParent }) {
         setDegree(list[i].degree);
         setTitle(list[i].title);
     }
+    const handleCloseAlert = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setError(false);
+    };
 
     function inputForm() {
         return (
             <div>
                 <Box
-
-                    component="form"
                     sx={{ '& > :not(style)': { m: 1, maxWidth: 700, mx: 'auto' } }}
                     autoComplete="off"
                 >
@@ -108,12 +117,22 @@ function EducationInfo({ sendEducationInfoToParent }) {
                         <Grid size={{ xs: 12, md: 6 }}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DatePicker label='Start Date' sx={{ width: '100%' }} value={startDate}
+                                    slotProps={{
+                                        textField: {
+                                            required: true,
+                                        },
+                                    }}
                                     onChange={(newValue) => setStartDate(newValue)} />
                             </LocalizationProvider>
                         </Grid>
                         <Grid size={{ xs: 12, md: 6 }}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DatePicker label='End Date' sx={{ width: '100%' }} value={endDate}
+                                    slotProps={{
+                                        textField: {
+                                            required: true,
+                                        },
+                                    }}
                                     onChange={(newValue) => setEndDate(newValue)} />
                             </LocalizationProvider>
                         </Grid>
@@ -127,11 +146,17 @@ function EducationInfo({ sendEducationInfoToParent }) {
         )
     }
     const updateList = () => {
-        if (selectedItem.index !== null) {
-            updateItem();
-            return;
+        let isValidated = formRef.current.reportValidity();
+        if (isValidated) {
+            if (selectedItem.index !== null) {
+                updateItem();
+                return;
+            }
+            createItem();
+        } else {
+            setError(true);
         }
-        createItem();
+
     };
     function removeItem(index) {
         let newArr = [...list];
@@ -178,13 +203,30 @@ function EducationInfo({ sendEducationInfoToParent }) {
     }
     function saveData() {
         sendEducationInfoToParent(data, 'education');
+
     }
 
     return (
         <>
-            {inputForm()}
-            <RenderEductionForm />
-            <Button sx={{ backgroundColor: '#0d47a1', color: 'white', my: 2 }} onClick={saveData} >Save</Button>
+            <form ref={formRef}>
+                {inputForm()}
+                <RenderEductionForm />
+                <Button sx={{ backgroundColor: '#0d47a1', color: 'white', my: 2 }} onClick={saveData} >Save</Button>
+            </form>
+            <Snackbar
+                open={error}
+                autoHideDuration={5000}
+                onClose={handleCloseAlert}
+            >
+                <Alert
+                    severity='error'
+                    variant="filled"
+                    sx={{ width: '100%' }}
+                >
+                    Please fill all Required fields
+                </Alert>
+
+            </Snackbar>
         </>
     )
 }

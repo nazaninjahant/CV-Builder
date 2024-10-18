@@ -13,7 +13,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import { Box, Button, IconButton, MenuItem, Select, TextField } from '@mui/material';
+import { Alert, Box, Button, IconButton, MenuItem, Select, Snackbar, TextField } from '@mui/material';
 
 const socialMediaList = {
     facebook: {
@@ -49,21 +49,28 @@ const socialMediaList = {
 var data = []
 
 export default function SocialMedia({ sendSocialMediaToParent }) {
+    const formRef = React.useRef();
     const [link, setLink] = React.useState('');
     const [icon, setIcon] = React.useState('facebook');
     const [list, setList] = React.useState([]);
     const [selectedItem, setSelectedItem] = React.useState(null);
+    const [error, setError] = React.useState(false);
 
     React.useEffect(() => {
     }, [selectedItem])
 
 
     const updateList = () => {
-        if (selectedItem !== null) {
-            updateItem();
-            return;
+        let isValidated = formRef.current.reportValidity();
+        if (isValidated) {
+            if (selectedItem !== null) {
+                updateItem();
+                return;
+            }
+            createItem();
+        } else {
+            setError(true)
         }
-        createItem();
     };
     function createItem() {
         var newItem = {
@@ -106,6 +113,15 @@ export default function SocialMedia({ sendSocialMediaToParent }) {
     function saveData() {
         sendSocialMediaToParent(data, 'socialMedia');
     }
+
+    const handleCloseAlert = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+
+        setError(false);
+    };
+
 
     function RenderItems() {
         return (
@@ -150,25 +166,41 @@ export default function SocialMedia({ sendSocialMediaToParent }) {
     return (
         <>
             <Box >
-                <Select
-                    size='small'
-                    labelId="Social Media"
-                    value={icon}
-                    label="icon"
-                    onChange={e => setIcon(e.target.value)}
+                <form ref={formRef}>
+                    <Select
+                        size='small'
+                        labelId="Social Media"
+                        value={icon}
+                        label="icon"
+                        onChange={e => setIcon(e.target.value)}
+                    >
+                        {Object.keys(socialMediaList).map((item, i) => (
+                            <MenuItem key={i} value={socialMediaList[item].val}>
+                                <IconButton >
+                                    {socialMediaList[item].icon}
+                                </IconButton>
+                            </MenuItem>
+                        ))}
+                    </Select>
+                    <TextField autoComplete='off' label='Link' required value={link} onChange={e => setLink(e.target.value)}></TextField>
+                    <Button onClick={updateList}>{selectedItem !== null ? 'Update Item' : 'Add New Item'}</Button>
+                    <RenderItems></RenderItems>
+                    <Button sx={{ backgroundColor: '#0d47a1', color: 'white', my: 2 }} onClick={saveData} >Save</Button>
+                </form>
+                <Snackbar
+                    open={error}
+                    autoHideDuration={5000}
+                    onClose={handleCloseAlert}
                 >
-                    {Object.keys(socialMediaList).map((item, i) => (
-                        <MenuItem key={i} value={socialMediaList[item].val}>
-                            <IconButton >
-                                {socialMediaList[item].icon}
-                            </IconButton>
-                        </MenuItem>
-                    ))}
-                </Select>
-                <TextField autoComplete='off' label='Link' required value={link} onChange={e => setLink(e.target.value)}></TextField>
-                <Button onClick={updateList}>{selectedItem !== null ? 'Update Item' : 'Add New Item'}</Button>
-                <RenderItems></RenderItems>
-                <Button sx={{ backgroundColor: '#0d47a1', color: 'white', my: 2 }} onClick={saveData} >Save</Button>
+                    <Alert
+                        severity='error'
+                        variant="filled"
+                        sx={{ width: '100%' }}
+                    >
+                        Please fill all Required fields
+                    </Alert>
+
+                </Snackbar>
             </Box>
         </>
     )

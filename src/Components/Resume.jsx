@@ -1,6 +1,7 @@
 
 // React
 import * as React from 'react';
+import { styled } from '@mui/material/styles';
 // MUI 
 import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
@@ -16,10 +17,12 @@ import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import VerifiedIcon from '@mui/icons-material/Verified';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 // Local
 import ResumeCard from './ResumeCard';
-import { Chip, ListItem, Stack } from '@mui/material';
+import { Badge, Button, Chip, ListItem, Stack } from '@mui/material';
 // MUI: Icons
+import CameraIcon from '@mui/icons-material/Camera';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
@@ -61,6 +64,47 @@ const socialMediaList = {
 
 // ResumePortfolio: A React component that displays a resume/portfolio.
 export default function ResumePortfolio({ data }) {
+    const [profileAvatar, setProfileAvatar] = React.useState(null);
+
+    function stringAvatar(name) {
+        var newName = '';
+        if (name.includes(' ')) {
+            newName = `${name.split(' ')[0][0]}${name.split(' ')[1][0]}`;
+        } else {
+            newName = `${name[0]}${name[1]}`;
+        }
+        return {
+            children: newName,
+        };
+    }
+
+    function InputFileUpload() {
+        // Upload Avatar and padd URL in profileAvatar state
+        return (
+            <IconButton
+                sx={{
+                    width: 22,
+                    height: 22,
+                    padding: 2,
+                    backgroundColor: 'rgb(31, 97, 151)'
+                }}
+                component="label"
+                size="large"
+                role={undefined}
+                variant="contained"
+                tabIndex={-1}
+            >
+                <CameraIcon />
+                <input
+                    accept="image/*"
+                    hidden
+                    type="file"
+                    onChange={(e) => setProfileAvatar(URL.createObjectURL(e.target.files[0]))}
+                />
+            </IconButton>
+        );
+    }
+
     return (
         <Box>
 
@@ -71,7 +115,15 @@ export default function ResumePortfolio({ data }) {
                     {/* Profile */}
                     <ResumeCard>
                         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                            <Avatar alt='avatar' src='https://www.w3schools.com/w3images/avatar_hat.jpg' sx={{ width: 100, height: 100 }} />
+                            <Badge
+                                overlap="circular"
+                                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                                badgeContent={
+                                    <InputFileUpload></InputFileUpload>
+                                }
+                            >
+                                {profileAvatar !== null ? <Avatar alt="avatar" sx={{ width: 100, height: 100 }} src={profileAvatar} /> : <Avatar {...stringAvatar(data.personal.name ? data.personal.name : 'John Doe')} sx={{ width: 100, height: 100 }} />}
+                            </Badge>
                             <Typography variant="h5" component="div" sx={{ mt: 2 }}>
                                 {data.personal.name ? data.personal.name : 'John Doe'}
                             </Typography>
@@ -193,7 +245,7 @@ export default function ResumePortfolio({ data }) {
                         }
                     </ResumeCard>
 
-                    {/* Work Experience */}
+                    {/* Experience */}
                     <ResumeCard>
                         <Typography variant="h6" component="div">
                             Work Experience
