@@ -86,8 +86,8 @@ function EducationInfo({ sendEducationInfoToParent }) {
             item: item,
             index: i
         })
-        setDegree(list[i].degree);
-        setTitle(list[i].title);
+        setDegree(data[i].degree);
+        setTitle(data[i].title);
     }
     const handleCloseAlert = (event, reason) => {
         if (reason === 'clickaway') {
