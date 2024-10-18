@@ -1,7 +1,5 @@
-
 // React
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
 // MUI 
 import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
@@ -17,10 +15,9 @@ import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
 import VerifiedIcon from '@mui/icons-material/Verified';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 // Local
 import ResumeCard from './ResumeCard';
-import { Badge, Button, Chip, ListItem, Stack } from '@mui/material';
+import { Badge, Chip, ListItem, Stack } from '@mui/material';
 // MUI: Icons
 import CameraIcon from '@mui/icons-material/Camera';
 import FacebookIcon from '@mui/icons-material/Facebook';
@@ -86,7 +83,8 @@ export default function ResumePortfolio({ data }) {
                     width: 22,
                     height: 22,
                     padding: 2,
-                    backgroundColor: 'rgb(31, 97, 151)'
+                    backgroundColor: 'rgb(31, 97, 151)',
+                    color: 'white'
                 }}
                 component="label"
                 size="large"
@@ -124,23 +122,23 @@ export default function ResumePortfolio({ data }) {
                             >
                                 {profileAvatar !== null ? <Avatar alt="avatar" sx={{ width: 100, height: 100 }} src={profileAvatar} /> : <Avatar {...stringAvatar(data.personal.name ? data.personal.name : 'John Doe')} sx={{ width: 100, height: 100 }} />}
                             </Badge>
-                            <Typography variant="h5" component="div" sx={{ mt: 2 }}>
+                            <Typography sx={{ mt: 2, fontSize: '1.5rem' }} style={{ textAlign: 'center' }}>
                                 {data.personal.name ? data.personal.name : 'John Doe'}
                             </Typography>
-                            <Typography color="text.secondary" sx={{ mt: 1 }}>
+                            <Typography sx={{ mt: 1 }} style={{ textAlign: 'center' }}>
                                 {data.personal.expertise ? data.personal.expertise : 'CTO'}
                             </Typography>
                         </Box>
 
                         {/* Contact Details */}
                         <Divider sx={{ mt: 2 }} />
-                        <List component="nav" dense>
-                            <ListItem disablePadding>
+                        <List dense>
+                            <ListItem alignItems="flex-start" disablePadding>
                                 <ListItemButton>
                                     <ListItemIcon style={{ minWidth: '36px' }}>
                                         <AlternateEmailIcon color='primary' />
                                     </ListItemIcon>
-                                    <ListItemText primary={data.personal.email ? data.personal.email : 'example@gmail.com'} />
+                                    <ListItemText style={{ lineBreak: 'anywhere' }} primary={data.personal.email ? data.personal.email : 'johndoe@gmail.com'} />
                                 </ListItemButton>
                             </ListItem>
                             <ListItem disablePadding>
@@ -163,7 +161,7 @@ export default function ResumePortfolio({ data }) {
                         <Divider sx={{ mb: 2 }} />
 
                         {/* Skills */}
-                        <Typography variant="h6" component="div" sx={{ mt: 2 }}>
+                        <Typography variant="h6" style={{ textAlign: 'center' }} component="div" sx={{ mt: 2 }}>
                             Skills
                         </Typography>
                         <Box sx={{ mt: 1, textAlign: 'center' }}>
