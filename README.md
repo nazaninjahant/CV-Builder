@@ -1,4 +1,8 @@
 # CV-Builder
+<p align="center">
+  <img src="cv.png"  >
+</p>
+
 # Welcome to CV Builder!
 
 Hi! , this is my first React Project **CV Builder**. 
@@ -14,3 +18,4 @@ Construction and design of CV builder with **React** and **Materia UI** framewor
 - Add skills 💡
 - Add photo for profile 🖼️
 - PDF output 📁
+
